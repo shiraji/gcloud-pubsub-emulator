@@ -1,13 +1,15 @@
 gcloud-pubsub-emulator
 ----------------------
-This repository contains the Docker configuration for Google's PubSub emulator. It's mainly the dockerization and documentation of https://github.com/prep/pubsubc 
+This repository contains the Docker configuration for Google's PubSub emulator. It's mainly the dockerization and documentation of https://github.com/floatschedule/pubsubc
+
+This is fork repository from https://github.com/marcelcorso/gcloud-pubsub-emulator
 
 Installation
 ------------
 A pre-built Docker container is available for Docker Hub:
 
 ```
-docker run --rm -ti -p 8681:8681 messagebird/gcloud-pubsub-emulator:latest
+docker run --rm -ti -p 8681:8681 shiraji/gcloud-pubsub-emulator:latest
 ```
 
 Or, you can build this repository yourself:
@@ -54,6 +56,20 @@ docker run --rm -ti -p 8681:8681 -e PUBSUB_PROJECT1=company-dev,invoices:invoice
 ```
 
 If you want to define more projects, you'd simply add a `PUBSUB_PROJECT2`, `PUBSUB_PROJECT3`, etc.
+
+### Push subscription
+
+The subscription string can be used to create a push subscription by appending the push endpoint to it separated by a `+`.
+
+```
+PUBSUB_PROJECT1=project-name,topic:push-subscription+endpoint
+```
+
+If you want to use URL with port, use `|` instead of `:`. `:` is for separator of topic and subscription.
+
+```
+PUBSUB_PROJECT1=shiraji-local,shiraji-local-topic:push-subscription+host.docker.internal|8080/hey
+```
 
 ### wait-for, wait-for-it
 If you're using this Docker image in a docker-compose setup or something similar, you might have leveraged scripts like [wait-for](https://github.com/eficode/wait-for) or [wait-for-it](https://github.com/vishnubob/wait-for-it) to detect when the PubSub service comes up before starting a container that depends on it being up. If you're _not_ using the above-mentioned _PUBSUB_PROJECT_ environment variable, you can simply check if port `8681` is available. If you _do_ depend on one or more _PUBSUB_PROJECT_ environment variables, you should check for the availability of port `8682` as that one will become available once all the topics and subscriptions have been created.
